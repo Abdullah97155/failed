@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RoofGuard Solutions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #d0e2ff;
+      padding: 20px;
+    }
+
+    .chatbox {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #fafafa;
+    }
+
+    .user, .bot {
+      margin: 8px 0;
+      padding: 6px 10px;
+      border-radius: 5px;
+      max-width: 80%;
+    }
+
+    .user {
+      background-color: #d0e6ff;
+      align-self: flex-end;
+      text-align: right;
+      margin-left: auto;
+    }
+
+    .bot {
+      background-color: #e0ffe1;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    input[type="text"] {
+      width: 75%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 8px 15px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏠 Flownetic Solutions</h1>
+  <p>Your trusted partner in roofing services. WITH experienced pat<meta name=""/>ners </p>
+
+  <div class="chatbox">
+    <h2>💬 Chat with us by saying hi</h2>
+    <div class="messages" id="chat"></div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function addMessage(sender, text) {
+      const chat = document.getElementById("chat");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = sender;
+      msgDiv.textContent = text;
+      chat.appendChild(msgDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (message === "") return;
+
+      addMessage("user", message);
+      input.value = "";
+
+      fetch("/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        addMessage("bot", data.reply);
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        addMessage("bot", "Sorry, there was a problem connecting to the server.");
+      });
+    }
+
+    // Optional: Press Enter to send
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
